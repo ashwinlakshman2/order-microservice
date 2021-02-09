@@ -1,0 +1,36 @@
+version: '3.7'
+services:
+
+  orderdb:
+    image: postgres
+    hostname: orderdb
+#    ports:
+#      - "5432:5432"
+    networks:
+      - microservices
+#    volumes:
+#      - "orderdb:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_PASSWORD=order
+      - POSTGRES_USER=order
+      - POSTGRES_DB=order
+
+  ordersvc:
+    image: mip/order-service
+    hostname: ordersvc
+    depends_on:
+      - orderdb
+    networks:
+      - microservices
+    ports:
+      - 8090:8080
+    environment:
+      - SPRING_PROFILES_ACTIVE=cloud #,hystrix
+
+networks:
+  microservices:
+    external: true
+
+#volumes:
+#  orderdb:
+#    external: true
